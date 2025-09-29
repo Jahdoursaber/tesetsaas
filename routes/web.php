@@ -14,11 +14,11 @@ Route::get('/', function () {
 });
 
 // Routes d'authentification pour l'application centrale
+    // Gestion des tenants
+    Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
+    Route::get('/tenants/create', [TenantController::class, 'create'])->name('tenants.create');
+    Route::post('/tenants', [TenantController::class, 'store'])->name('tenants.store');
 
-// Gestion des tenants
-Route::get('/tenants', [TenantController::class, 'index'])->name('tenants.index');
-Route::get('/tenants/create', [TenantController::class, 'create'])->name('tenants.create');
-Route::post('/tenants', [TenantController::class, 'store'])->name('tenants.store');
 Route::prefix('t/{tenant}')
     ->middleware(['web', InitializeTenancyByPath::class])
     ->group(function () {
@@ -29,7 +29,7 @@ Route::prefix('t/{tenant}')
             Route::post('/login',   [LoginController::class, 'login'])->name('tenant.login.post');
 
             Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('tenant.register');
-            Route::post('/register', [RegisterController::class, 'register'])->name('tenant.register.post');
+            Route::post('/register',[RegisterController::class, 'register'])->name('tenant.register.post');
         });
 
         // --- Authentifiés
@@ -39,6 +39,6 @@ Route::prefix('t/{tenant}')
             // IMPORTANT : utiliser /dashboard (et non "/") pour éviter les conflits
             Route::get('/dashboard', [DashboardController::class, 'index'])->name('tenant.dashboard');
 
-            Route::resource('users', UserController::class);
+            Route::resource('/users', UserController::class);
         });
     });

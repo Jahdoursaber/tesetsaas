@@ -50,8 +50,8 @@ class TenantController extends Controller
 
 
 
-        return redirect()->route('tenants.index')
-            ->with('success', 'Tenant créé. URL: ' . url('/t/'.$tenant->id));
+        return redirect()->route('tenant.login', ['tenant' => $tenant->id])
+    ->with('success', 'Tenant créé. Connectez-vous à votre espace.');
     }
 
 

@@ -28,9 +28,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('tenant.dashboard', [
-                'tenant' => $request->route('tenant')
-            ]);
+            return redirect()->route('tenant.dashboard');
         }
 
         return back()->withErrors([
@@ -47,6 +45,6 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('tenant.login', ['tenant' => $tenant]);
+        return redirect()->route('tenant.login');
     }
 }

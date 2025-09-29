@@ -45,6 +45,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('tenant.dashboard', ['tenant' => $tenantId]);
+        return redirect()->route('tenant.dashboard');
     }
 }
