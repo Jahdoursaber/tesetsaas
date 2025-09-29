@@ -20,7 +20,7 @@ Route::get('/', function () {
     Route::post('/tenants', [TenantController::class, 'store'])->name('tenants.store');
 
 Route::prefix('t/{tenant}')
-    ->middleware(['web', InitializeTenancyByPath::class])
+    ->middleware(['web', InitializeTenancyByPath::class, 'tenant.defaults'])
     ->group(function () {
 
         // --- Visiteurs (non authentifiés)
