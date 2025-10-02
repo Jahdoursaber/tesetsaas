@@ -11,7 +11,7 @@ use Stancl\Tenancy\Database\Concerns\BelongsToTenant;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,BelongsToTenant;
+    use HasFactory, Notifiable, BelongsToTenant;
 
     /**
      * The attributes that are mass assignable.
@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'tenant_id',
     ];
 
     /**

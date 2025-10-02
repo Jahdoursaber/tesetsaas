@@ -3,12 +3,16 @@
 @section('title', 'Modifier un Utilisateur')
 
 @section('content')
+@php
+    $tenantKey = tenant('id') ?? request()->route('tenant');
+@endphp
+
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow">
             <div class="card-header bg-primary text-white">Modifier l'utilisateur</div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ route('users.update', $user->id) }}">
+                <form method="POST" action="{{ route('users.update', ['tenant' => $tenantKey, 'user' => $user->id]) }}">
                     @csrf
                     @method('PUT')
 
@@ -43,7 +47,7 @@
 
                     <div class="d-grid gap-2">
                         <button type="submit" class="btn btn-primary">Mettre à jour l'utilisateur</button>
-                        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Annuler</a>
+                        <a href="{{ route('users.index', ['tenant' => $tenantKey]) }}" class="btn btn-outline-secondary">Annuler</a>
                     </div>
                 </form>
             </div>

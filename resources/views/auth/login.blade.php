@@ -3,12 +3,17 @@
 @section('title', 'Connexion')
 
 @section('content')
+@php
+    $tenantKey = tenant('id') ?? ($tenant ?? request()->route('tenant'));
+    $tenantName = tenant('name') ?? $tenant ?? 'Espace';
+@endphp
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card shadow">
-            <div class="card-header bg-primary text-white">Connexion</div>
+            <div class="card-header bg-primary text-white">Connexion - {{ $tenantName }}</div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('tenant.login.post', ['tenant' => $tenantKey]) }}">
                     @csrf
 
                     <div class="mb-3">
@@ -36,6 +41,10 @@
                         <button type="submit" class="btn btn-primary">Connexion</button>
                     </div>
                 </form>
+
+                <div class="text-center mt-3">
+                    <a href="{{ route('tenant.register', ['tenant' => $tenantKey]) }}">Creer un compte</a>
+                </div>
             </div>
         </div>
     </div>

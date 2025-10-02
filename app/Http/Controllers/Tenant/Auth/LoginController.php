@@ -9,42 +9,56 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * Affiche le formulaire de connexion
+     * Display the tenant login form.
      */
-    public function showLoginForm()
+    public function showLoginForm(Request $request)
     {
-        return view('tenant.auth.login');
+        $tenant = $request->route('tenant');
+
+        return view('tenant.auth.login', compact('tenant'));
     }
 
     /**
-     * Traite la demande de connexion
+     * Handle a login request for the tenant application.
      */
     public function login(Request $request)
     {
+        $tenantId = tenant('id') ?? $request->route('tenant');
+
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $credentials['tenant_id'] = $tenantId;
+
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->route('tenant.dashboard', ['tenant' => $request->route('tenant')]);
+
+            return redirect()->route('tenant.dashboard', [
+                'tenant' => $tenantId,
+            ]);
         }
 
-        return back()->withErrors([
-            'email' => 'Les identifiants fournis ne correspondent pas à nos enregistrements.',
-        ]);
+        return back()
+            ->withErrors([
+                'email' => 'Invalid credentials.',
+            ])
+            ->onlyInput('email');
     }
 
     /**
-     * Déconnecte l'utilisateur
+     * Log the tenant user out of the application.
      */
     public function logout(Request $request)
     {
-        $tenant = $request->route('tenant');
+        $tenant = tenant('id') ?? $request->route('tenant');
+
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('tenant.login');
+
+        return redirect()->route('tenant.login', ['tenant' => $tenant]);
     }
 }

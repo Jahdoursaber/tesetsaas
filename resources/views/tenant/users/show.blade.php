@@ -1,16 +1,20 @@
 @extends('layouts.tenant')
 
-@section('title', 'Détails de l\'Utilisateur')
+@section('title', "Détails de l'utilisateur")
 
 @section('content')
+@php
+    $tenantKey = tenant('id') ?? request()->route('tenant');
+@endphp
+
 <div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card shadow">
             <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                 <span>Détails de l'utilisateur</span>
                 <div>
-                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-sm btn-light me-2">Modifier</a>
-                    <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-light">Retour</a>
+                    <a href="{{ route('users.edit', ['tenant' => $tenantKey, 'user' => $user->id]) }}" class="btn btn-sm btn-light me-2">Modifier</a>
+                    <a href="{{ route('users.index', ['tenant' => $tenantKey]) }}" class="btn btn-sm btn-outline-light">Retour</a>
                 </div>
             </div>
             <div class="card-body p-4">

@@ -3,12 +3,17 @@
 @section('title', 'Dashboard')
 
 @section('content')
+@php
+    $tenantKey = tenant('id') ?? request()->route('tenant');
+    $tenantName = tenant('name') ?? ($tenant->name ?? $tenantKey ?? 'Espace');
+@endphp
+
 <div class="row mb-4">
     <div class="col-md-12">
         <div class="card shadow-sm">
             <div class="card-body">
                 <h2 class="card-title">Bienvenue sur votre Dashboard, {{ $user->name }}</h2>
-                <p class="card-text">Vous êtes connecté à l'espace de {{ $tenant->name ?? $tenant->id }}.</p>
+                <p class="card-text">Vous êtes connecté à l'espace de {{ $tenantName }}.</p>
             </div>
         </div>
     </div>
@@ -20,7 +25,7 @@
             <div class="card-body">
                 <h3 class="card-title">Gestion des utilisateurs</h3>
                 <p class="card-text">Gérez les utilisateurs de votre espace.</p>
-                <a href="{{ route('users.index') }}" class="btn btn-primary">Voir les utilisateurs</a>
+                <a href="{{ route('users.index', ['tenant' => $tenantKey]) }}" class="btn btn-primary">Voir les utilisateurs</a>
             </div>
         </div>
     </div>

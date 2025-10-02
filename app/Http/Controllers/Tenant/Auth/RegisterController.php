@@ -5,46 +5,52 @@ namespace App\Http\Controllers\Tenant\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
     /**
-     * Affiche le formulaire d'inscription
+     * Display the tenant registration form.
      */
-    public function showRegistrationForm()
+    public function showRegistrationForm(Request $request)
     {
-        return view('tenant.auth.register');
+        $tenant = $request->route('tenant');
+
+        return view('tenant.auth.register', compact('tenant'));
     }
 
     /**
-     * Traite la demande d'inscription
+     * Handle the tenant registration request.
      */
     public function register(Request $request)
     {
-        $tenantId = $request->route('tenant');
+        $tenantId = tenant('id') ?? $request->route('tenant');
 
         $request->validate([
-            'name'     => ['required','string','max:255'],
-            // ⬇️ unicité par tenant_id (composite)
-            'email'    => [
-                'required','email','max:255',
-                Rule::unique('users','email')->where(fn($q) => $q->where('tenant_id', tenant('id') ?? $tenantId)),
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->where(
+                    fn ($query) => $query->where('tenant_id', $tenantId)
+                ),
             ],
-            'password' => ['required','string','min:8','confirmed'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            // 'tenant_id' sera auto-renseigné par le trait BelongsToTenant si tenancy est initialisée par path
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
+            'tenant_id' => $tenantId,
         ]);
 
         Auth::login($user);
+        $request->session()->regenerate();
 
-        return redirect()->route('tenant.dashboard');
+        return redirect()->route('tenant.dashboard', ['tenant' => $tenantId]);
     }
 }

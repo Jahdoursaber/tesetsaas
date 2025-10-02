@@ -3,9 +3,13 @@
 @section('title', 'Gestion des Utilisateurs')
 
 @section('content')
+@php
+    $tenantKey = tenant('id') ?? request()->route('tenant');
+@endphp
+
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>Gestion des Utilisateurs</h1>
-    <a href="{{ route('users.create') }}" class="btn btn-primary">Ajouter un utilisateur</a>
+    <a href="{{ route('users.create', ['tenant' => $tenantKey]) }}" class="btn btn-primary">Ajouter un utilisateur</a>
 </div>
 
 @if($users->isEmpty())
@@ -34,12 +38,11 @@
                             <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-outline-primary">Voir</a>
-                                    <a href="{{ route('users.edit', $user->id) }}" class="btn btn-outline-secondary">Modifier</a>
+                                    <a href="{{ route('users.show', ['tenant' => $tenantKey, 'user' => $user->id]) }}" class="btn btn-outline-primary">Voir</a>
+                                    <a href="{{ route('users.edit', ['tenant' => $tenantKey, 'user' => $user->id]) }}" class="btn btn-outline-secondary">Modifier</a>
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $user->id }}">Supprimer</button>
                                 </div>
 
-                                <!-- Modal de confirmation de suppression -->
                                 <div class="modal fade" id="deleteModal{{ $user->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $user->id }}" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
@@ -53,7 +56,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                                <form action="{{ route('users.destroy', ['tenant' => $tenantKey, 'user' => $user->id]) }}" method="POST" class="d-inline">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-danger">Supprimer</button>

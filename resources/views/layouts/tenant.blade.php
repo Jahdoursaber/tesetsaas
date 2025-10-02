@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ tenant('name') }} - @yield('title', 'Accueil')</title>
-    <!-- Bootstrap 5 CSS via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
+    @php
+        $tenantKey = tenant('id') ?? request()->route('tenant');
+    @endphp
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
         <div class="container">
             <a class="navbar-brand" href="{{ url('/') }}">{{ tenant('name') }}</a>
@@ -18,20 +20,20 @@
                 <ul class="navbar-nav me-auto">
                     @auth
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tenant.dashboard') }}">Dashboard</a>
+                            <a class="nav-link" href="{{ route('tenant.dashboard', ['tenant' => $tenantKey]) }}">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('users.index') }}">Utilisateurs</a>
+                            <a class="nav-link" href="{{ route('users.index', ['tenant' => $tenantKey]) }}">Utilisateurs</a>
                         </li>
                     @endauth
                 </ul>
                 <ul class="navbar-nav">
                     @guest
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tenant.login') }}">Connexion</a>
+                            <a class="nav-link" href="{{ route('tenant.login', ['tenant' => $tenantKey]) }}">Connexion</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('tenant.register') }}">Inscription</a>
+                            <a class="nav-link" href="{{ route('tenant.register', ['tenant' => $tenantKey]) }}">Inscription</a>
                         </li>
                     @else
                         <li class="nav-item dropdown">
@@ -40,9 +42,9 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end">
                                 <li>
-                                    <form action="{{ route('tenant.logout') }}" method="POST">
+                                    <form action="{{ route('tenant.logout', ['tenant' => $tenantKey]) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="dropdown-item">Déconnexion</button>
+                                        <button type="submit" class="dropdown-item">Deconnexion</button>
                                     </form>
                                 </li>
                             </ul>
@@ -71,11 +73,10 @@
 
     <footer class="bg-light py-4 mt-5">
         <div class="container text-center">
-            <p class="mb-0">&copy; {{ date('Y') }} {{ tenant('name') }}. Tous droits réservés.</p>
+            <p class="mb-0">&copy; {{ date('Y') }} {{ tenant('name') }}. Tous droits reserves.</p>
         </div>
     </footer>
 
-    <!-- Bootstrap 5 JS Bundle via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
